@@ -69,6 +69,7 @@ collect-data:
   BUILD +cs
   BUILD +d
   BUILD +d-ldc
+  BUILD +dart
   BUILD +elixir
   BUILD +fortran
   BUILD +go
@@ -192,6 +193,13 @@ d-ldc:
   RUN apk add --no-cache ldc gcc musl-dev llvm-libunwind-static llvm12
   RUN --no-cache ldc2 leibniz.d -of leibniz -O3 -release -mcpu=native -static -flto=thin -ffast-math -Xcc='-march=native -mtune=native -fomit-frame-pointer -fno-signed-zeros -fno-trapping-math -fassociative-math'
   DO +BENCH --name="d-ldc" --lang="D (LDC)" --version="ldc2 --version" --cmd="./leibniz"
+
+dart:
+  FROM dart:latest
+  DO +PREPARE_DEBIAN
+  DO +ADD_FILES --src="leibniz.dart"
+  RUN --no-cache dart compile exe leibniz.dart
+  DO +BENCH --name="dart" --lang="Dart" --version="dart --version" --cmd="./leibniz.exe"
 
 elixir:
   FROM +alpine --src="leibniz.ex"
