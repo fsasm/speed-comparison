@@ -75,6 +75,7 @@ collect-data:
   BUILD +elixir
   BUILD +fortran
   BUILD +go
+  BUILD +go-v3
   BUILD +haskell
   BUILD +java
   BUILD +java-vecops
@@ -237,6 +238,14 @@ go:
   DO +ADD_FILES --src="leibniz.go"
   RUN --no-cache go build leibniz.go
   DO +BENCH --name="go" --lang="Go" --version="go version" --cmd="./leibniz"
+
+go-v3:
+  # We can reuse the build image of the scbench tool
+  FROM golang:1.19.1-alpine
+  DO +PREPARE_ALPINE
+  DO +ADD_FILES --src="leibniz.go"
+  RUN --no-cache GOAMD64=v3 go build leibniz.go
+  DO +BENCH --name="go-v3" --lang="Go (GOAMD=v3)" --version="go version" --cmd="./leibniz"
 
 haskell:
   FROM haskell:9.4.3-slim
