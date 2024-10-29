@@ -70,6 +70,8 @@ collect-data:
   BUILD +d
   BUILD +d-ldc
   BUILD +dart
+  BUILD +dart-jit
+  BUILD +dart-simd
   BUILD +elixir
   BUILD +fortran
   BUILD +go
@@ -200,6 +202,19 @@ dart:
   DO +ADD_FILES --src="leibniz.dart"
   RUN --no-cache dart compile exe leibniz.dart
   DO +BENCH --name="dart" --lang="Dart" --version="dart --version" --cmd="./leibniz.exe"
+
+dart-simd:
+  FROM dart:latest
+  DO +PREPARE_DEBIAN
+  DO +ADD_FILES --src="leibniz-simd.dart"
+  RUN --no-cache dart compile exe leibniz-simd.dart
+  DO +BENCH --name="dart-simd" --lang="Dart (SIMD)" --version="dart --version" --cmd="./leibniz-simd.exe"
+
+dart-jit:
+  FROM dart:latest
+  DO +PREPARE_DEBIAN
+  DO +ADD_FILES --src="leibniz.dart"
+  DO +BENCH --name="dart-jit" --lang="Dart (JIT)" --version="dart --version" --cmd="dart run leibniz.dart"
 
 elixir:
   FROM +alpine --src="leibniz.ex"
